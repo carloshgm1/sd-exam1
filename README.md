@@ -92,7 +92,7 @@ then we install all the glusterfs packages using yum and start the service
       service: name=glusterd state=started
 ```
 
-finally we mount the file system and load the hosts file
+finally we mount the file system and load the hosts 
 
 ```yaml
   tasks:
@@ -105,6 +105,33 @@ finally we mount the file system and load the hosts file
     - name: Set /etc/hosts using template
       action: template dest=/etc/hosts src=templates/hosts.j2 owner=root group=root
 ```
+
+Por otra parte creamos el volumen del gluster conformado por 2 nodos y el master
+
+```yaml
+- hosts : db
+  convertirse en : verdadero
+  vars_files :
+    - ../vars/variables.yml
+  tareas :
+    - nombre : crear volumen de gluster
+      gluster_volume :
+        estado : presente
+        nombre : " {{volumeName}} "
+        ladrillos : " {{fsMount}} / {{volumeName}} "
+        réplicas : 3
+        clúster : ["nodo1", "nodo2", "maestro"]
+      run_once : true
+```
+
+Se inicializa el volumen del gluster
+
+```yaml
+    - nombre : Iniciar volumen de Gluster
+      gluster_volume: name = {{volumeName}} estado = iniciado
+```
+
+
 
 ### Vagrant file
 
